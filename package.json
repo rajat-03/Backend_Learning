@@ -1,0 +1,19 @@
+{
+  "name": "backendproject",
+  "version": "1.0.0",
+  "description": "first backend example project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "backend",
+    "javascript"
+  ],
+  "author": "Rajat",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
