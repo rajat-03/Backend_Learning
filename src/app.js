@@ -20,5 +20,12 @@ app.use(express.static("public")); //public folder se data lena ya save krne k l
 //server se user ke cookies access kr paaye aur set kr paaye
 app.use(cookieParser());
 
+//routes import
+//user.routes.js me export default use kiye isliye yaha router k jagha apna koi v naam de skte hain
+import userRouter from "./routes/user.routes.js"
+
+app.use("/api/v1/users", userRouter)
+
+//url bnega: http://localhost:8000/api/v1/users/register
 
 export { app };
