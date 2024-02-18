@@ -46,7 +46,7 @@ const userSchema = new Schema(
       type: String,
     },
   },
-  { timestapms: true }
+  { timestamps: true }
 );
 
 // pre hook hai jo save hone se pehle run krega
