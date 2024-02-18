@@ -4,23 +4,23 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-const generateAccessAndRefreshTokens = async (userId) => {
+
+const generateAccessAndRefereshTokens = async(userId) =>{
   try {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refereshToken = user.generateRefreshToken();
+      const user = await User.findById(userId)
+      const accessToken = user.generateAccessToken()
+      const refreshToken = user.generateRefreshToken()
 
-    user.refereshToken = refereshToken;
-    await user.save({ validateBeforeSave: false });
+      user.refreshToken = refreshToken
+      await user.save({ validateBeforeSave: false })
 
-    return { accessToken, refereshToken };
+      return {accessToken, refreshToken}
+
+
   } catch (error) {
-    throw new ApiError(
-      500,
-      "Something went wrong while creating access and refresh token"
-    );
+      throw new ApiError(500, "Something went wrong while generating referesh and access token")
   }
-};
+}
 
 const registerUser = asyncHandler(async (req, res) => {
   // things need to do in this method to create user
@@ -99,18 +99,12 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  //req body -> data
-  //username or email based login
-  //find the user
-  //password check
-  //access and refresh token
-  //send cookie
 
   //req body -> data
   const { email, username, password } = req.body;
 
   //username or email based login
-  if (!username || !email) {
+  if (!username && !email) {
     throw new ApiError(400, "username or email is required!");
   }
 
@@ -131,10 +125,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   //generate access and refresh token
-  const { accessToken, refereshToken } = await generateAccessAndRefreshTokens(
-    user._id
-  );
-
+  const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
@@ -145,20 +136,19 @@ const loginUser = asyncHandler(async (req, res) => {
   };
 
   return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refereshToken, options)
-    .json(
+  .status(200)
+  .cookie("accessToken", accessToken, options)
+  .cookie("refreshToken", refreshToken, options)
+  .json(
       new ApiResponse(
-        200,
-        {
-          user: loggedInUser,
-          accessToken,
-          refereshToken,
-        },
-        "User Logged In Successfully"
+          200, 
+          {
+              user: loggedInUser, accessToken, refreshToken
+          },
+          "User logged In Successfully"
       )
-    );
+  )
+
 });
 
 const logoutUser = asyncHandler(async(req, res) => {
