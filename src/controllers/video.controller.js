@@ -183,6 +183,27 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
+  const video = await Video.findById(videoId);
+  if (!video) {
+    throw new ApiError(404, "Video not found");
+  }
+
+  // Toggle the publish status
+  video.isPublished = !video.isPublished;
+
+  // Save the updated video to the database
+  const updatedVideo = await video.save();
+
+  // Return a success response with the updated video object
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      updatedVideo,
+      `Video publish status toggled successfully. New publish status: ${
+        updatedVideo.isPublished ? "Published" : "Unpublished"
+      }`
+    )
+  );
 });
 
 export {
